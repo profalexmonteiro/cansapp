@@ -1,11 +1,17 @@
 package com.example.app01;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -14,17 +20,23 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.EditText;
 
-public class Home extends AppCompatActivity {
+import java.math.BigDecimal;
+
+public class Home extends AppCompatActivity implements LocationListener {
 
     private static Context context;
     EditText etSpeed;
     EditText etBW;
     EditText etPWL;
     EditText etDisplay;
+
+    LocationManager locationManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +48,17 @@ public class Home extends AppCompatActivity {
         etSpeed = (EditText) findViewById(R.id.editTextSpeed);
         etDisplay = (EditText) findViewById(R.id.editTextDisplay);
         etPWL = (EditText) findViewById(R.id.editTextPowerLevel);
+
+        try {
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
+
 
 
     public int getBandwith(){
@@ -58,6 +80,14 @@ public class Home extends AppCompatActivity {
         return downSpeed;
     }
 
+    public void getVelocidade(){
+        try {
+            locationManager = (LocationManager) getApplication().getApplicationContext().getSystemService(LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,5,Home.this);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
     public boolean getStateDisplay(){
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -79,22 +109,10 @@ public class Home extends AppCompatActivity {
         return batteryPct;
     }
 
-    public float getSpeedMove(){
-
-        Location location = new Location("teste");
-
-        float speed=0;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            speed = location.getSpeedAccuracyMetersPerSecond();
-        }
-
-        return speed;
-    }
-
-
     public void updateParameters(View v){
 
-        etSpeed.setText(Float.toString(getSpeedMove()));
+        getVelocidade();
+    //    etSpeed.setText(Float.toString(getSpeedMove()));
         etBW.setText(Integer.toString(getBandwith()));
         if(getStateDisplay())
             etDisplay.setText("ligado");
@@ -104,9 +122,9 @@ public class Home extends AppCompatActivity {
 
     }
 
-
-
-
-
-
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+            etSpeed.setText(String.valueOf(location.getSpeed()));
+            Log.d("VELOCIDADE",String.valueOf(location.getSpeed()));
+    }
 }
