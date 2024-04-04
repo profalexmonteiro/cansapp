@@ -21,7 +21,6 @@ import android.widget.EditText;
 public class Home extends AppCompatActivity {
 
     private static Context context;
-
     EditText etSpeed;
     EditText etBW;
     EditText etPWL;
@@ -46,15 +45,15 @@ public class Home extends AppCompatActivity {
         int downSpeed=0;
         int upSpeed;
 
-        for (Network network : connMgr.getAllNetworks()) {
+        //for (Network network : connMgr.getAllNetworks()) {
 
-            NetworkInfo networkInfo = connMgr.getNetworkInfo(network);
+            //NetworkInfo networkInfo = connMgr.getNetworkInfo(network);
 
             NetworkCapabilities nc = connMgr.getNetworkCapabilities(connMgr.getActiveNetwork());
             downSpeed = downSpeed + nc.getLinkDownstreamBandwidthKbps();
             upSpeed = nc.getLinkUpstreamBandwidthKbps();
 
-        }
+        //}
 
         return downSpeed;
     }
