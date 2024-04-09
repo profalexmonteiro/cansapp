@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -13,33 +16,41 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
-import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
-import android.net.wifi.WifiSsid;
 import android.os.BatteryManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.widget.EditText;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public class Home extends AppCompatActivity implements LocationListener {
 
-    private static Context context;
+    private Context context;
     EditText etSpeed;
     EditText etBW;
     EditText etPWL;
     EditText etDisplay;
 
     LocationManager locationManager;
+
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Discovery has found a device. Get the BluetoothDevice
+                // object and its info from the Intent.
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                Log.d("BLUETOOTH",device.toString());
+            }
+        }
+    };
+
 
 
     @Override
@@ -48,37 +59,42 @@ public class Home extends AppCompatActivity implements LocationListener {
         setContentView(R.layout.activity_home);
 
         context = getApplicationContext();
-        etBW = (EditText) findViewById(R.id.editTextBW);
-        etSpeed = (EditText) findViewById(R.id.editTextSpeed);
-        etDisplay = (EditText) findViewById(R.id.editTextDisplay);
-        etPWL = (EditText) findViewById(R.id.editTextPowerLevel);
+        etBW = findViewById(R.id.editTextBW);
+        etSpeed = findViewById(R.id.editTextSpeed);
+        etDisplay = findViewById(R.id.editTextDisplay);
+        etPWL = findViewById(R.id.editTextPowerLevel);
 
         try {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 101);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.d("ERROR", "Wi-Fi scan");
         }
 
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(receiver, filter);
+
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // Don't forget to unregister the ACTION_FOUND receiver.
+        unregisterReceiver(receiver);
+    }
+
 
 
     public int getBandwith() {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
         int downSpeed = 0;
-        int upSpeed;
-
-        //for (Network network : connMgr.getAllNetworks()) {
-
-        //NetworkInfo networkInfo = connMgr.getNetworkInfo(network);
 
         NetworkCapabilities nc = connMgr.getNetworkCapabilities(connMgr.getActiveNetwork());
-        downSpeed = downSpeed + nc.getLinkDownstreamBandwidthKbps();
-        upSpeed = nc.getLinkUpstreamBandwidthKbps();
-
-        //}
+        assert nc != null;
+        downSpeed += nc.getLinkDownstreamBandwidthKbps();
 
         return downSpeed;
     }
@@ -86,9 +102,19 @@ public class Home extends AppCompatActivity implements LocationListener {
     public void getVelocidade() {
         try {
             locationManager = (LocationManager) getApplication().getApplicationContext().getSystemService(LOCATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, Home.this);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.d("ERRO","Error GPS");
         }
     }
 
@@ -101,9 +127,8 @@ public class Home extends AppCompatActivity implements LocationListener {
     public boolean getStateDisplay() {
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        boolean isScreenOn = pm.isInteractive();
 
-        return isScreenOn;
+        return pm.isInteractive();
     }
 
     public float getLevelPower() {
@@ -111,12 +136,11 @@ public class Home extends AppCompatActivity implements LocationListener {
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = context.registerReceiver(null, ifilter);
 
+        assert batteryStatus != null;
         int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
         int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
-        float batteryPct = level * 100 / (float) scale;
-
-        return batteryPct;
+        return level * 100 / (float) scale;
     }
 
     public void scanWifi() {
@@ -139,17 +163,18 @@ public class Home extends AppCompatActivity implements LocationListener {
 
     }
 
+
     public void updateParameters(View v){
 
         scanWifi();
         getVelocidade();
     //    etSpeed.setText(Float.toString(getSpeedMove()));
-        etBW.setText(Integer.toString(getBandwith()));
+        etBW.setText(String.valueOf(getBandwith()));
         if(getStateDisplay())
-            etDisplay.setText("ligado");
+            etDisplay.setText(R.string.ligado);
         else
-            etDisplay.setText("desligado");
-        etPWL.setText(Float.toString(getLevelPower()));
+            etDisplay.setText(R.string.desligado);
+        etPWL.setText(String.valueOf(getLevelPower()));
 
     }
 
