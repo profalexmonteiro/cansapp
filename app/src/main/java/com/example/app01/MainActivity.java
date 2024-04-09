@@ -14,8 +14,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        //this.getSupportActionBar().hide();
         //getSupportActionBar().hide();
-        //getWindow().setStatusBarColor(new Color().parseColor("blue"));
+      //  this.getWindow().setStatusBarColor(new Color().parseColor("blue"));
+        //getWindow().setStatusBarColor();
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override

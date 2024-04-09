@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">CANS</string>
-    <string name="velocidade">Velocidade</string>
+    <string name="velocidade">Velocidade Km/h</string>
     <string name="display">Display</string>
-    <string name="bandwidth">Bandwidth</string>
-    <string name="n_vel_de_bateria">Nível de bateria</string>
-    <string name="update">update</string>
-    <string name="ligado">ligado</string>
-    <string name="desligado">desligado</string>
+    <string name="bandwidth">Bandwidth Mbps</string>
+    <string name="n_vel_de_bateria">Nível de bateria (%)</string>
+    <string name="update">Update</string>
+    <string name="ligado">Ligado</string>
+    <string name="desligado">Desligado</string>
 </resources>
