@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -30,7 +28,9 @@ import android.widget.EditText;
 
 import java.util.List;
 
-public class Home extends AppCompatActivity implements LocationListener {
+import Controller.DeviceController;
+
+public class Home extends AppCompatActivity{
 
     private Context context;
     EditText etSpeed;
@@ -38,6 +38,7 @@ public class Home extends AppCompatActivity implements LocationListener {
     EditText etPWL;
     EditText etDisplay;
     LocationManager locationManager;
+    DeviceController deviceController;
 
     BluetoothManager bm;
     BluetoothAdapter bluetoothAdapter;
@@ -53,6 +54,8 @@ public class Home extends AppCompatActivity implements LocationListener {
         etSpeed = findViewById(R.id.editTextSpeed);
         etDisplay = findViewById(R.id.editTextDisplay);
         etPWL = findViewById(R.id.editTextPowerLevel);
+
+        deviceController = new DeviceController(context);
 
         bm = getSystemService(BluetoothManager.class);
         bluetoothAdapter = bm.getAdapter();
@@ -94,66 +97,6 @@ public class Home extends AppCompatActivity implements LocationListener {
         unregisterReceiver(receiver);
     }
 
-
-
-    public int getBandwith() {
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        int downSpeed = 0;
-
-        NetworkCapabilities nc = connMgr.getNetworkCapabilities(connMgr.getActiveNetwork());
-        assert nc != null;
-
-        downSpeed += nc.getLinkDownstreamBandwidthKbps();
-        downSpeed += nc.getLinkUpstreamBandwidthKbps();
-
-        return downSpeed/1024;
-    }
-
-    public void getVelocidade() {
-        try {
-            locationManager = (LocationManager) getApplication().getApplicationContext().getSystemService(LOCATION_SERVICE);
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, Home.this);
-        } catch (Exception e) {
-            Log.d("[CANSAPP]:","ERRO: " + "Error GPS");
-        }
-    }
-
-    @Override
-    public void onLocationChanged(@NonNull Location location) {
-        etSpeed.setText(String.valueOf(location.getSpeed()));
-        Log.d("[CANSAPP]:","VELOCIDADE: " + String.valueOf(location.getSpeed()));
-    }
-
-    public boolean getStateDisplay() {
-
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-
-        return pm.isInteractive();
-    }
-
-    public float getLevelPower() {
-
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = context.registerReceiver(null, ifilter);
-
-        assert batteryStatus != null;
-        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-
-        return level * 100 / (float) scale;
-    }
-
     public void scanWifi() {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -178,14 +121,14 @@ public class Home extends AppCompatActivity implements LocationListener {
     public void updateParameters(View v){
 
         scanWifi();
-        getVelocidade();
-    //    etSpeed.setText(Float.toString(getSpeedMove()));
-        etBW.setText(String.valueOf(getBandwith()));
-        if(getStateDisplay())
+
+        etSpeed.setText(String.valueOf(deviceController.getSpeedMove()));
+        etBW.setText(String.valueOf(deviceController.getBandwith()));
+        if(deviceController.getStateDisplay())
             etDisplay.setText(R.string.ligado);
         else
             etDisplay.setText(R.string.desligado);
-        etPWL.setText(String.valueOf(getLevelPower()));
+        etPWL.setText(String.valueOf(deviceController.getLevelPower()));
 
 
 
