@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_margin="10pt"
-    tools:context=".Home">
+    tools:context=".HomeActivity">
 
     <TextView
         android:layout_width="wrap_content"
@@ -18,8 +18,11 @@
         android:id="@+id/editTextSpeed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="@string/km_h"
+        android:textAlignment="textEnd"
         android:inputType="numberDecimal"
         android:autofillHints=""
+        android:maxWidth="480dp"
         android:ems="10"
         android:minHeight="48dp" />
 
@@ -36,7 +39,9 @@
         android:inputType="text"
         android:layout_height="wrap_content"
         android:autofillHints=""
+        android:textAlignment="textEnd"
         android:ems="10"
+        android:maxWidth="480dp"
         android:minHeight="48dp"/>
 
     <TextView
@@ -52,7 +57,9 @@
         android:layout_height="wrap_content"
         android:autofillHints=""
         android:inputType="numberDecimal"
+        android:textAlignment="textEnd"
         android:ems="10"
+        android:maxWidth="280dp"
         android:minHeight="48dp"/>
 
     <TextView
@@ -67,8 +74,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autofillHints=""
+        android:textAlignment="textEnd"
         android:inputType="numberDecimal"
         android:ems="10"
+        android:maxWidth="480dp"
         android:minHeight="48dp"
         />
 

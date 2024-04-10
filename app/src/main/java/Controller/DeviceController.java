@@ -1,6 +1,8 @@
 package Controller;
 
 import static android.content.Context.LOCATION_SERVICE;
+
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -8,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -17,6 +20,9 @@ import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.PowerManager;
 import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
+
 import Model.DeviceMobile;
 
 public class DeviceController {
@@ -115,10 +121,14 @@ public class DeviceController {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         deviceMobile.setWifiNeighrs(wifiManager.getScanResults());
 
+        analyzeWifi();
+
+    }
+
+    public void analyzeWifi() {
         for (ScanResult result: deviceMobile.getWifiNeihgbohrs()){
             Log.d("[CANSAPP]:","Wi-Fi: " + result.toString());
         }
-
     }
 
 

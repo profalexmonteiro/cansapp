@@ -3,7 +3,6 @@ package com.example.app01;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent ab = new Intent(MainActivity.this, Home.class);
+                Intent ab = new Intent(MainActivity.this, HomeActivity.class);
                 startActivity(ab);
                 finish();
             }

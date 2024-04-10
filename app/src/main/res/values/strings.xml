@@ -7,4 +7,5 @@
     <string name="update">Update</string>
     <string name="ligado">Ligado</string>
     <string name="desligado">Desligado</string>
+    <string name="km_h">Km/h</string>
 </resources>

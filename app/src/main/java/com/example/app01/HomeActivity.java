@@ -5,21 +5,17 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import Controller.DeviceController;
+import Service.ServiceCANS;
 
-public class Home extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
 
     Context context;
     EditText etSpeed;
@@ -27,9 +23,6 @@ public class Home extends AppCompatActivity {
     EditText etPWL;
     EditText etDisplay;
     DeviceController deviceController;
-    BluetoothManager bm;
-    BluetoothAdapter bluetoothAdapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +48,8 @@ public class Home extends AppCompatActivity {
             Log.d("[CANSAPP]: ", "ERROR" + "Wi-Fi scan");
         }
 
+        startService(new Intent(getBaseContext(), ServiceCANS.class));
+
     }
 
     @Override
@@ -66,8 +61,6 @@ public class Home extends AppCompatActivity {
 
 
     public void updateParameters(View v){
-
-        deviceController.scanWifi();
 
         etSpeed.setText(String.valueOf(deviceController.getSpeedMove()));
         etBW.setText(String.valueOf(deviceController.getBandwidth()));
