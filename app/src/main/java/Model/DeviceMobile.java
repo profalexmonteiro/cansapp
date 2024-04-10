@@ -7,7 +7,7 @@ public class DeviceMobile {
     float speed;
     boolean display;
     long bandwith;
-    long powerlevel;
+    double powerlevel;
 
     public float getSpeed() {
         return speed;
@@ -33,11 +33,11 @@ public class DeviceMobile {
         this.bandwith = bandwith;
     }
 
-    public long getPowerlevel() {
+    public double getPowerlevel() {
         return powerlevel;
     }
 
-    public void setPowerlevel(long powerlevel) {
+    public void setPowerlevel(double powerlevel) {
         this.powerlevel = powerlevel;
     }
 

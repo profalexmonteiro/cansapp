@@ -1,13 +1,9 @@
 package Controller;
 
 import static android.content.Context.LOCATION_SERVICE;
-import static androidx.core.content.ContextCompat.getSystemService;
-
-import android.bluetooth.BluetoothClass;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -16,16 +12,8 @@ import android.net.NetworkCapabilities;
 import android.os.BatteryManager;
 import android.os.PowerManager;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-
-import com.example.app01.Home;
-
-import java.net.ConnectException;
-
 import Model.DeviceMobile;
-
 public class DeviceController {
 
     Context context;
@@ -53,7 +41,7 @@ public class DeviceController {
         return pm.isInteractive();
     }
 
-    public int getBandwith() {
+    public long getBandwith() {
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         int downSpeed = 0;
@@ -67,19 +55,21 @@ public class DeviceController {
 
         deviceMobile.setBandwith(downSpeed/1024);
 
-        return downSpeed/1024;
+        return deviceMobile.getBandwith();
     }
 
-    public float getLevelPower() {
+    public double getLevelPower() {
 
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = context.registerReceiver(null, ifilter);
 
         assert batteryStatus != null;
-        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        float level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        float scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
 
-        return level * 100 / (float) scale;
+        deviceMobile.setPowerlevel(level * 100.0/scale);
+
+        return deviceMobile.getPowerlevel();
     }
 
     public float getSpeedMove() {
