@@ -71,7 +71,6 @@ public class DeviceController {
         }
     };
 
-
     public boolean getStateDisplay() {
 
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
@@ -115,20 +114,6 @@ public class DeviceController {
 
     public float getSpeedMove() {
         return deviceMobile.getSpeed();
-    }
-
-    public void scanWifi() {
-        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        deviceMobile.setWifiNeighrs(wifiManager.getScanResults());
-
-        analyzeWifi();
-
-    }
-
-    public void analyzeWifi() {
-        for (ScanResult result: deviceMobile.getWifiNeihgbohrs()){
-            Log.d("[CANSAPP]:","Wi-Fi: " + result.toString());
-        }
     }
 
 

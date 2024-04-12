@@ -7,12 +7,89 @@ import java.util.List;
 
 public class DeviceMobile {
 
+    public enum IFACE{
+        IF_BLUETOOTH,
+        IF_WIFI,
+        IF_5G
+    }
+
+    public enum IDCONTEXT{
+        TROUGHPUT {
+            @Override
+            public String toString() {
+                return "Troughput";
+            }
+        },
+        POWERSAVE {
+            @Override
+            public String toString() {
+                return "Powersave";
+            }
+        },
+        COVERAGE {
+            @Override
+            public String toString() {
+                return "Coverage";
+            }
+        }
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    String hostname;
+
+    public IDCONTEXT getCurrentContext() {
+        return currentContext;
+    }
+
+    public void setCurrentContext(IDCONTEXT currentContext) {
+        this.currentContext = currentContext;
+    }
+
+    IDCONTEXT currentContext;
+
+    public IFACE getBestInterface() {
+        return bestInterface;
+    }
+
+    public void setBestInterface(IFACE bestInterface) {
+        this.bestInterface = bestInterface;
+    }
+
+    IFACE bestInterface;
+
     float speed;
     boolean display;
     long bandwith;
+
+    public int getAcConnector() {
+        return acConnector;
+    }
+
+    public void setAcConnector(int acConnector) {
+        this.acConnector = acConnector;
+    }
+
+    int acConnector;
     double powerlevel;
 
-    List<ScanResult> wifiNeighrs;
+    WirelessNet current_wifinet;
+
+    public List<WirelessNet> getWifiNeighrs() {
+        return this.wifiNeighrs;
+    }
+
+    public void setWifiNeighrs(List<WirelessNet> wifiNeighrs) {
+        this.wifiNeighrs = wifiNeighrs;
+    }
+
+    List<WirelessNet> wifiNeighrs;
 
     public float getSpeed() {
         return speed;
@@ -45,19 +122,6 @@ public class DeviceMobile {
     public void setPowerlevel(double powerlevel) {
         this.powerlevel = powerlevel;
     }
-
-    public List<ScanResult> getWifiNeihgbohrs() {
-        return wifiNeighrs;
-    }
-
-    public void setWifiNeighrs(List<ScanResult> wifiNeighrs) {
-        this.wifiNeighrs = wifiNeighrs;
-    }
-
-
-
-
-
 
 
 }

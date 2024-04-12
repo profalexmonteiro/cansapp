@@ -10,13 +10,15 @@ import android.util.Log;
 
 import java.time.Clock;
 
+import Controller.CANSController;
 import Controller.DeviceController;
 import Model.DeviceMobile;
 
 
 public class ServiceCANS extends Service {
 
-    DeviceController dc;
+    CANSController cc;
+    DeviceMobile md;
     final Handler handler = new Handler();
     Runnable runnable = new Runnable() {
 
@@ -24,11 +26,18 @@ public class ServiceCANS extends Service {
         public void run() {
             try{
                 //do your code here
-                dc = new DeviceController(ServiceCANS.this);
-                Log.d("[CANSAPP]", "power level: " + dc.getLevelPower());
-                Log.d("[CANSAPP]", "Display:  " + dc.getStateDisplay());
 
-                dc.scanWifi();
+                cc.gathering_information();
+                cc.print_contextinformation();
+                DeviceMobile.IDCONTEXT saida = cc.identifyContext();
+                Log.d("[CANSAPP]","Context: "+ saida.toString());
+
+                //cc.scanWifi();
+                //cc.printWifi();
+                //cc.scoreWifi();
+
+
+
 
             }
             catch (Exception e) {
@@ -50,6 +59,9 @@ public class ServiceCANS extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+       DeviceMobile md = new DeviceMobile();
+       cc = new CANSController(ServiceCANS.this,md);
 
        Log.d("[CANSAPP]", " onStartCommand - iniciando");
        //runnable must be execute once
