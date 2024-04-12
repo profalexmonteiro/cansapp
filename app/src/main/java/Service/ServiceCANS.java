@@ -28,10 +28,10 @@ public class ServiceCANS extends Service {
                 //do your code here
 
                 cc.gathering_information();
-                cc.print_contextinformation();
-                DeviceMobile.IDCONTEXT saida = cc.identifyContext();
-                Log.d("[CANSAPP]","Context: "+ saida.toString());
 
+                cc.identifyContext();
+
+                cc.print_contextinformation();
                 //cc.scanWifi();
                 //cc.printWifi();
                 //cc.scoreWifi();

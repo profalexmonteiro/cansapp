@@ -79,6 +79,8 @@ public class CANSController {
     public void print_contextinformation(){
         Log.d("[CANSAPP]", "Display: " + String.valueOf(dm.getDisplay()) + " Power Level: "
                 + String.valueOf(dm.getPowerlevel()) + " Bandwith: " + dm.getBandwith() + " Speed: " + dm.getSpeed());
+        Log.d("[CANSAPP]","Context: "+ dm.getCurrentContext().toString());
+
     }
 
     public DeviceMobile.IDCONTEXT identifyContext(){
