@@ -31,13 +31,12 @@ public class ServiceCANS extends Service {
 
                 cc.identifyContext();
 
+                cc.selectInterface();
+
                 cc.print_contextinformation();
                 //cc.scanWifi();
                 //cc.printWifi();
                 //cc.scoreWifi();
-
-
-
 
             }
             catch (Exception e) {

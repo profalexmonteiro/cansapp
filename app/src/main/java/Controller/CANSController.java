@@ -3,9 +3,8 @@ package Controller;
 import static android.content.Context.LOCATION_SERVICE;
 
 
-import static Model.DeviceMobile.IDCONTEXT.COVERAGE;
-import static Model.DeviceMobile.IDCONTEXT.POWERSAVE;
-import static Model.DeviceMobile.IDCONTEXT.TROUGHPUT;
+import static Model.DeviceMobile.IDCONTEXT.*;
+import static Model.DeviceMobile.IFACE.*;
 
 import android.content.Context;
 import android.content.Intent;
@@ -65,9 +64,11 @@ public class CANSController {
         int downSpeed = 0;
 
         NetworkCapabilities nc = connMgr.getNetworkCapabilities(connMgr.getActiveNetwork());
-
         assert nc != null;
-        //Log.d("[CANSAPP]: ","NETWORK: " + nc.toString());
+
+        dm.getCurrent_wifinet().setConected(connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isAvailable());
+        dm.getCurrent_5G().setConected(connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isAvailable());
+        dm.getCurrent_bluetooth().setConected(connMgr.getNetworkInfo(ConnectivityManager.TYPE_BLUETOOTH).isAvailable());
 
         downSpeed += nc.getLinkDownstreamBandwidthKbps();
         downSpeed += nc.getLinkUpstreamBandwidthKbps();
@@ -77,9 +78,11 @@ public class CANSController {
     }
 
     public void print_contextinformation(){
-        Log.d("[CANSAPP]", "Display: " + String.valueOf(dm.getDisplay()) + " Power Level: "
-                + String.valueOf(dm.getPowerlevel()) + " Bandwith: " + dm.getBandwith() + " Speed: " + dm.getSpeed());
+        Log.d("[CANSAPP]", "Display: " + String.valueOf(dm.getDisplay()) + " | Power Level: "
+                + String.valueOf(dm.getPowerlevel()) + " | Bandwith: " + dm.getBandwith() + "|  Speed: " + dm.getSpeed());
         Log.d("[CANSAPP]","Context: "+ dm.getCurrentContext().toString());
+
+        Log.d("[CANSAPP]","Best Interface: "+ dm.getBestInterface().toString());
 
     }
 
@@ -134,6 +137,63 @@ public class CANSController {
 
         dm.setCurrentContext(TROUGHPUT);
         return TROUGHPUT;
+    }
+
+    public DeviceMobile.IFACE selectInterface(){
+
+        switch (dm.getCurrentContext()){
+            case COVERAGE:
+                            if(dm.getCurrent_5G().isConected()) {
+                                dm.setBestInterface(IF_5G);
+                                return IF_5G;
+                            }
+                            if(dm.getCurrent_wifinet().isConected()) {
+                                dm.setBestInterface(IF_WIFI);
+                                return IF_WIFI;
+                            }
+                            if(dm.getCurrent_bluetooth().isConected()) {
+                                dm.setBestInterface(IF_BLUETOOTH);
+                                return IF_BLUETOOTH;
+                            }
+                            break;
+            case POWERSAVE:
+                if(dm.getCurrent_bluetooth().isConected()) {
+                    dm.setBestInterface(IF_BLUETOOTH);
+                    return IF_BLUETOOTH;
+                }
+                if(dm.getCurrent_wifinet().isConected()){
+                    dm.setBestInterface(IF_WIFI);
+                    return IF_WIFI;
+                }
+                if(dm.getCurrent_5G().isConected()) {
+                    dm.setBestInterface(IF_5G);
+                    return IF_5G;
+                }
+                break;
+
+            case TROUGHPUT:
+                if(dm.getCurrent_wifinet().isConected()) {
+                    dm.setBestInterface(IF_WIFI);
+                    return IF_WIFI;
+                }
+                if(dm.getCurrent_5G().isConected()) {
+                    dm.setBestInterface(IF_5G);
+                    return IF_5G;
+                }
+                if(dm.getCurrent_bluetooth().isConected()) {
+                    dm.setBestInterface(IF_BLUETOOTH);
+                    return IF_BLUETOOTH;
+                }
+                break;
+
+            default:
+                dm.setBestInterface(IF_WIFI);
+                return IF_WIFI;
+
+        }
+
+        dm.setBestInterface(IF_WIFI);
+        return IF_WIFI;
     }
 
     public void scanWifi() {
