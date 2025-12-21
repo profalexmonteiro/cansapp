@@ -85,9 +85,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/update"
         android:onClick="updateParameters"
-        />
+        android:text="@string/update"
+        android:textColor="#4A148C" />
 
 
 </LinearLayout>

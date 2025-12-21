@@ -2,9 +2,6 @@ package Model;
 
 public class WirelessNet {
 
-
-
-
     String SSID;
     String ifName;
     String ipAddress;
